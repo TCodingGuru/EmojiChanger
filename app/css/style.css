@@ -1,0 +1,9 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+img {
+    width: 300px;
+    height: auto;
+    transition: opacity 0.3s ease-in-out;
+}

@@ -1,20 +1,27 @@
-const expressions = ["images/happy.png", "images/sad.png", "images/neutral.png"];
+document.addEventListener("DOMContentLoaded", function () {
+    const expressions = ["images/happy.png", "images/sad.png", "images/neutral.png"];
 
-let currentIndex = 0;
+    let img = document.querySelector("#character"); 
+    let audio = document.querySelector("#audio");   
+    let button = document.querySelector("#changeButton"); 
 
-function changeExpression() {
-    let img = document.getElementById("character");
-    img.style.opacity = 0;
+    function changeExpression() {
+        img.style.opacity = 0;
 
-    setTimeout(() => {
-        img.src = expressions[currentIndex];
-        img.style.opacity = 1;
-        currentIndex = (currentIndex + 1) % expressions.length;
-    }, 300); 
-}
+        setTimeout(() => {
+            let randomIndex = Math.floor(Math.random() * expressions.length); 
+            img.src = expressions[randomIndex];
+            img.style.opacity = 1;
+        }, 300);
+    }
+    
+    function play() {
+        audio.currentTime = 0;
+        audio.play().catch(error => console.error("Playback failed:", error));
+    }
 
-function play() {
-    var audio = document.getElementById("audio");
-    audio.currentTime = 0;  // Reset to start
-    audio.play().catch(error => console.error("Playback failed:", error));
-}
+    button.addEventListener("click", function () {
+        changeExpression();
+        play();
+    });
+});

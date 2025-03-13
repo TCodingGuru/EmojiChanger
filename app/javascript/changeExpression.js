@@ -12,3 +12,9 @@ function changeExpression() {
         currentIndex = (currentIndex + 1) % expressions.length;
     }, 300); 
 }
+
+function play() {
+    var audio = document.getElementById("audio");
+    audio.currentTime = 0;  // Reset to start
+    audio.play().catch(error => console.error("Playback failed:", error));
+}

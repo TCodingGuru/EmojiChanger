@@ -1,68 +1,55 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const expressions = ["images/happy.png", "images/sad.png", "images/neutral.png"];
     let cards = [...expressions, ...expressions];
-    let flippedCards = [];
-    let matchedPairs = 0;
-    let moves = 0;
+    let flippedCards = [], matchedPairs = 0, moves = 0;
 
     const board = document.querySelector("#gameBoard");
     const movesDisplay = document.querySelector("#moves");
     const messageDisplay = document.querySelector("#message");
     const restartButton = document.querySelector("#restartButton");
 
-    function shuffle(array) {
-        return array.sort(() => Math.random() - 0.5);
-    }
+    const shuffle = (array) => array.sort(() => Math.random() - 0.5);
 
-    //reset game
-    function createBoard() {
-        flippedCards = [];
-        matchedPairs = 0;
-        moves = 0;
+    // Creates a card element
+    const createCard = (expression) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.expression = expression;
+
+        const frontFace = document.createElement("img");
+        frontFace.src = expression;
+        frontFace.classList.add("card-front");
+
+        const backFace = document.createElement("img");
+        backFace.src = "images/card-back.png";
+        backFace.classList.add("card-back");
+
+        card.append(frontFace, backFace);
+        card.addEventListener("click", () => flipCard(card));
+
+        return card;
+    };
+
+    const createBoard = () => {
+        [flippedCards, matchedPairs, moves] = [[], 0, 0];
         movesDisplay.textContent = `Moves: ${moves}`;
         messageDisplay.textContent = "Find all matching pairs!";
-
         board.innerHTML = "";
+        shuffle(cards).forEach(expression => board.append(createCard(expression)));
+    };
 
-        // Shuffle cards
-        let shuffledCards = shuffle(cards);
-
-        shuffledCards.forEach(expression => {
-            let card = document.createElement("div");
-            card.classList.add("card");
-            card.dataset.expression = expression;
-
-            let frontFace = document.createElement("img");
-            frontFace.src = expression;
-            frontFace.classList.add("card-front");
-
-            let backFace = document.createElement("img");
-            backFace.src = "images/card-back.png"; 
-            backFace.classList.add("card-back");
-
-            card.appendChild(frontFace);
-            card.appendChild(backFace);
-            board.appendChild(card);
-
-            card.addEventListener("click", () => flipCard(card));
-        });
-    }
-
-    function flipCard(card) {
+    const flipCard = (card) => {
         if (flippedCards.length < 2 && !card.classList.contains("matched") && !card.classList.contains("flipped")) {
             card.classList.add("flipped");
             flippedCards.push(card);
 
-            if (flippedCards.length === 2) {
-                checkMatch();
-            }
+            if (flippedCards.length === 2) checkMatch();
         }
-    }
+    };
 
-    function checkMatch() {
-        let [card1, card2] = flippedCards;
-        let expression1 = card1.dataset.expression;
-        let expression2 = card2.dataset.expression;
+    const checkMatch = () => {
+        const [card1, card2] = flippedCards;
+        const [expression1, expression2] = [card1.dataset.expression, card2.dataset.expression];
 
         if (expression1 === expression2) {
             card1.classList.add("matched");
@@ -79,21 +66,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         flippedCards = [];
         moves++;
-        updateUI();
+        movesDisplay.textContent = `Moves: ${moves}`;
 
         if (matchedPairs === expressions.length) {
             messageDisplay.textContent = `🎉 You won in ${moves} moves!`;
         }
-    }
+    };
 
-    function updateUI() {
-        movesDisplay.textContent = `Moves: ${moves}`;
-    }
+    restartButton.addEventListener("click", createBoard);
 
-    restartButton.addEventListener("click", function () {
-        createBoard();
-    });
-
-    // create board when page loads
-    createBoard();
+    createBoard(); 
 });
